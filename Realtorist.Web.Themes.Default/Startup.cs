@@ -12,14 +12,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Runtime.Loader;
 
 namespace Realtorist.Web.Themes.Default
 {
     public class Startup : IConfigureServicesAction, IConfigureAction
     {
-        public int Priority => 2;
+        public int Priority => 1000;
 
         void IConfigureServicesAction.Execute(IServiceCollection services, IServiceProvider serviceProvider)
         {

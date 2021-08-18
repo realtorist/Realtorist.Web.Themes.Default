@@ -1,1 +1,1 @@
-Web project for Realtorist project.
+Default website theme for Realtorist project.
