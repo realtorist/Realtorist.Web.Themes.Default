@@ -1,0 +1,54 @@
+﻿@using Realtorist.Models.Enums
+@using Realtorist.Models.Helpers
+@model RequestInformationModel
+@{ 
+    var disabledRequestTypes = new[] { RequestType.CreateAccount }.Union(
+        ViewData.ContainsKey("disabledRequestTypes") ? ViewData["disabledRequestTypes"] as RequestType[] : new RequestType[0]
+    );
+}
+
+<form asp-controller="Request" asp-action="PostRequest" method="POST" autocomplete="off" class="request-information-form">
+    <input name="Address" class="form-control" id="request-form-address" type="hidden" value="@Model.Address" />
+    <input asp-for="ListingId" class="form-control" id="request-form-listing-id" type="hidden" />
+    <div class="form-group">
+        <label for="request-form-name">Name *</label>
+        <input asp-for="Name" class="form-control" id="request-form-name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div class="form-group">
+        <label for="request-form-phone">Phone</label>
+        <input asp-for="Phone" class="form-control" id="request-form-phone" type="tel" data-inputmask = "'mask': '(999) 999-9999'" />
+        <span asp-validation-for="Phone"></span>
+    </div>
+    <div class="form-group">
+        <label for="request-form-email">Email *</label>
+        <input asp-for="Email" class="form-control" id="request-form-email" type="email" />
+        <span asp-validation-for="Email"></span>
+    </div>
+    <div class="form-group @(Enum.GetValues<RequestType>().Where(x => !disabledRequestTypes.Contains(x)).Count() <= 1 ? "hide" : string.Empty)">
+        <label for="request-form-type">Request type</label>
+        <select asp-for="Type" asp-items="Html.GetEnumSelectList<RequestType>().Where(x => !disabledRequestTypes.Contains(Enum.Parse<RequestType>(x.Value)))" class="form-control" id="request-form-type"></select>
+    </div>
+    <div class="form-group">
+        <label for="request-form-iam-buyer-seller">I am a *</label>
+        <div class="row labeled-radios">
+            @foreach (var iam in Enum.GetValues<Iam>())
+            {
+                var id = "request-form-iam-" + iam.ToString().CamelCaseSplit(" - ").ToLower();
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <input type="radio" name="iam" value="@((int)iam)" id="@id" @(iam == Model.Iam ? "checked" : "") />
+                    <label for="@id">@iam.GetLookupDisplayText()</label>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="request-form-message">Message *</label>
+        <textarea asp-for="Message" class="form-control" id="request-form-message" cols="30" rows="5"></textarea>
+        <span asp-validation-for="Message"></span>
+    </div>
+    <div class="form-group submit">
+        <input type="submit" value="Request" class="btn py-3 px-4 btn-primary"/>
+    </div>
+    <partial name="_Loader" model='(false, true, false, "request-form-loader")'/>
+</form>

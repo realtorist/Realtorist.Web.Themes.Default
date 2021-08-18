@@ -1,0 +1,50 @@
+﻿@using Realtorist.Models.Search
+@model ListingSearchResult
+@{
+    ViewData["title"] = $"Listing search";
+}
+
+<section class="ftco-section ftco-properties mt-3 p-0" id="properties-section">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="search-wrap mb-2 mt-2">
+                    <h3 class="mb-3 text-center">Search Listings</h3>
+                    @await Html.PartialAsync("_AdvancedSearchSidebar", Model.Search)
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="search-listings" class="view-map">
+        <div class="map-or-list-wrapper">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="map-or-list" value="map" id="map-or-list-map" checked><span
+                        class="icon-map"></span> Map
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="map-or-list" value="list" id="map-or-list-list"><span
+                        class="icon-list"></span> List
+                </label>
+            </div>
+        </div>
+        <div class="row h-100 m-0">
+            <!-- end -->
+            <div class="col-lg-8 display-map">
+                <div id="search-results-map">
+                    <div id="map"></div>
+                </div>
+            </div>
+            <div class="col-lg-4 p-0 h-100 overflow-hidden display-list">
+                <div id="search-results">
+                    @await Html.PartialAsync("_SearchResultsWithPagination", Model)
+                </div>
+                @await Html.PartialAsync("_Loader", (false, true, false, "search-loader"))
+            </div>
+        </div>
+    </div>
+</section>
+
+@section AdditionalScripts {
+    <script type="text/javascript" src="/@(ResourceHelper.ContentPrefix)/js/search.js?as"></script>
+}

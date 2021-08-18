@@ -1,0 +1,39 @@
+@model Dictionary<string, JToken>
+@{
+    var image = Model?.GetValueOrDefault("backgroundImage")?.ToObject<string>();
+}
+<section class="ftco-intro img home-worth-component"
+         id="about-section"
+         style="@(!image.IsNullOrEmpty() ? $"background-image: url({image}); background-position: 50% 200px;" : string.Empty)"
+         data-stellar-background-ratio="0.5">
+    @if (!image.IsNullOrEmpty())
+    {
+        <div class="overlay"></div>
+    }
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-9 text-center">
+                <h2>@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "What's My Home Worth?")</h2>
+                <p>@(Model?.GetValueOrDefault("subTitle")?.ToObject<string>() ?? "Type your address below to find out how much your property is worth")</p>
+                <form action="@Url.Action("HomeWorth", "Index")"
+                      class="search-location"
+                      id="home-worth">
+                    <div class="row">
+                        <div class="col-lg align-items-end">
+                            <div class="form-group">
+                                <div class="form-field">
+                                    <input type="text"
+                                           class="form-control"
+                                           name="Address"
+                                           id="home-worth-address"
+                                           placeholder="Search by location">
+                                    <button><span class="ion-ios-search"></span></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

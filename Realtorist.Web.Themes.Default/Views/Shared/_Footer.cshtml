@@ -1,0 +1,105 @@
+﻿@inject ISettingsProvider SettingsProvider
+@{
+    var settings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+    var socialSettings = await SettingsProvider.GetSettingAsync<SocialSettings>(SettingTypes.Social);
+    var themeSettings = await SettingsProvider.GetSettingAsync<ThemeSettings>(AppearanceSettingTypes.ThemeSettings);
+}
+
+<footer class="ftco-footer ftco-section">
+    <div class="container-fluid px-md-5">
+        <div class="row mb-5">
+            <div class="col-md">
+                <div class="ftco-footer-widget mb-4">
+                    <h2 class="ftco-heading-2">@settings.WebsiteName</h2>
+                    <p>@settings.WebsiteName - @settings.WebsiteTitle</p>
+                    <ul class="ftco-footer-social list-unstyled mt-5">
+                        @if (!(socialSettings?.FacebookProfileUrl.IsNullOrEmpty() ?? true))
+                        {
+                            <li class="ftco-animate"><a href="@socialSettings.FacebookProfileUrl"
+                               target="_blank"><span class="icon-facebook"></span></a></li>
+                        }
+                        @if (!(socialSettings?.InstagramProfileUrl.IsNullOrEmpty() ?? true))
+                        {
+                            <li class="ftco-animate"><a href="@socialSettings.InstagramProfileUrl"
+                               target="_blank"><span class="icon-instagram"></span></a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md">
+                @if (!(themeSettings?.FooterMenu.IsNullOrEmpty() ?? true))
+                {
+                    <div class="ftco-footer-widget mb-4 ml-md-4">
+                        <h2 class="ftco-heading-2">Helpful links</h2>
+                        <ul class="list-unstyled">
+                            @foreach (var item in themeSettings.FooterMenu)
+                            {
+                                <li><a href="@item.Link"><span class="icon-long-arrow-right mr-2"></span>@item.Title</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </div>
+            @* <div class="col-md">
+                <div class="ftco-footer-widget mb-4 ml-md-4">
+                <h2 class="ftco-heading-2">About Us</h2>
+                <ul class="list-unstyled">
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Our Story</a></li>
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Meet the team</a></li>
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Careers</a></li>
+                </ul>
+                </div>
+                </div> *@
+            @* <div class="col-md">
+                <div class="ftco-footer-widget mb-4">
+                <h2 class="ftco-heading-2">Company</h2>
+                <ul class="list-unstyled">
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>About Us</a></li>
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Press</a></li>
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Contact</a></li>
+                <li><a href="#"><span class="icon-long-arrow-right mr-2"></span>Careers</a></li>
+                </ul>
+                </div>
+                </div> *@
+            <div class="col-md">
+                <div class="ftco-footer-widget mb-4">
+                    <h2 class="ftco-heading-2">Have a Questions?</h2>
+                    <div class="block-23 mb-3">
+                        <ul>
+                            <li><span class="icon icon-map-marker"></span><span class="text">@profile.Address</span>
+                            </li>
+                            <li><a href="tel:@profile.Phone"><span class="icon icon-phone"></span><span
+                                          class="text">@profile.Phone.FormatPhoneNumber()</span></a></li>
+                            <li><a href="mailto:@profile.Email"><span class="icon icon-envelope pr-4"></span><span
+                                          class="text">@profile.Email</span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+
+                <p class="text-center text-small">
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                    Copyright &copy;@DateTime.Now.Year All rights reserved
+                    @* | This template is made with <i
+                        class="icon-heart color-danger"
+                        aria-hidden="true"></i> by <a href="https://colorlib.com"
+                        target="_blank">Colorlib</a> *@
+                    <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                </p>
+                @if (!settings.LegalDisclaimer.IsNullOrEmpty())
+                {
+                    <p>
+                        <div id="footerLegalCon" class="container">
+                            @await Html.PartialAsync("_HtmlEditorDisplay", settings.LegalDisclaimer)
+                        </div>
+                    </p>
+                }
+
+            </div>
+        </div>
+    </div>
+</footer>

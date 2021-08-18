@@ -1,0 +1,54 @@
+﻿@using Realtorist.Models.Search
+@model ListingSearchResult
+
+<div class="row m-0">
+    <div class="col-md-8">
+        <h3 class="mb-3">Results: @Model.Result.TotalRecords Listings</h3>
+    </div>
+    <div class="col-md-4">
+        @Html.DropDownListFor(x => x.Search.SortBy, Html.GetEnumSelectList<ListingsSortBy>(), new { @class= "form-control h-auto", id = "search-sort-by" })
+    </div>
+</div>
+
+@* <div class="w-100 overflow-x-hidden"> *@
+    <div class="row m-0 w-100 overflow-y-auto">
+        @foreach (var listing in Model.Result.Results)
+        {
+            <div class="col-md-12 col-lg-6">
+                @await Html.PartialAsync("_ListingItem", (listing, true))
+            </div>
+        }
+        @if (Model.Result.Results.Length == 0)
+        {
+            <div class="col-md-12">
+                <h5>Sorry, no listings that match your criteria were found. Please refine your search or contact me to help you find your dream home</h5>
+                <p>Or send me a message and I can definetely help you with your search</p>
+                <br/>
+                @await Html.PartialAsync("_RequestInformationForm", new Realtorist.Models.Dto.RequestInformationModel())
+            </div>
+        }
+    </div>
+@* </div> *@
+<div class="row mt-5 m-0">
+    <div class="col text-center">
+        <div class="block-27">
+            <paging page-no="Model.Result.CurrentPage"
+                    page-size="Model.Result.Limit"
+                    total-records="Model.Result.TotalRecords"
+                    max-displayed-pages="3"
+                    page-size-dropdown-items="24-48-72"
+                    show-page-size-nav="false"
+                    show-total-pages="false"
+                    show-total-records="false"
+                    class-paging-control="pagination"
+                    ajax="true"
+                    ajax-update="#search-results"
+                    ajax-begin="searchAjaxBegin"
+                    ajax-complete="searchAjaxComplete"
+                    ajax-url="?requestType=@((int)ListingSearchRequestType.Partial)"
+                    query-string-key-page-no="@(nameof(ListingSearchRequest.Pagination)).@(nameof(ListingSearchRequest.Pagination.Page))"
+                    query-string-key-page-size="@(nameof(ListingSearchRequest.Pagination)).@(nameof(ListingSearchRequest.Pagination.Limit))">
+            </paging>
+        </div>
+    </div>
+</div>

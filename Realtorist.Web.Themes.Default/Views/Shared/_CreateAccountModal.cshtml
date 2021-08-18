@@ -1,0 +1,84 @@
+﻿@model Realtorist.Models.Dto.RequestInformationModel
+@{
+    Model.Type = RequestType.CreateAccount;
+    Model.Message = "I want to create account to view properties";
+}
+
+<div class="modal fade"
+     id="createAccountModal"
+     tabindex="-1"
+     role="dialog"
+     aria-labelledby="createAccountLabel"
+     data-keyboard="false"
+     data-backdrop="static"
+     aria-hidden="true">
+    <div class="modal-dialog"
+         role="document">
+        <div class="modal-content bg-light">
+            <div class="modal-header">
+                <h5 class="modal-title"
+                    id="requestInformationModalLabel">Create a free account</h5>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4>Create an account to be able to see properties</h4>
+                        
+                        <form asp-controller="Request"
+                              asp-action="PostRequest"
+                              method="POST"
+                              autocomplete="off">
+                            <input name="Address"
+                                   class="form-control"
+                                   id="request-form-address"
+                                   type="hidden"
+                                   value="@Model.Address" />
+                            <input name="Type"
+                                   class="form-control"
+                                   id="request-form-type"
+                                   type="hidden"
+                                   value="@Model.Type" />
+                            <input name="Message"
+                                   class="form-control"
+                                   id="request-form-message"
+                                   type="hidden"
+                                   value="@Model.Message" />
+                            <input asp-for="ListingId"
+                                   class="form-control"
+                                   id="request-form-listing-id"
+                                   type="hidden" />
+                            <div class="form-group">
+                                <label for="request-form-name">Name *</label>
+                                <input asp-for="Name"
+                                       class="form-control"
+                                       id="request-form-name" />
+                                <span asp-validation-for="Name"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="request-form-phone">Phone</label>
+                                <input asp-for="Phone"
+                                       class="form-control"
+                                       id="request-form-phone"
+                                       type="tel"
+                                       data-inputmask="'mask': '(999) 999-9999'" />
+                                <span asp-validation-for="Phone"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="request-form-email">Email *</label>
+                                <input asp-for="Email"
+                                       class="form-control"
+                                       id="request-form-email"
+                                       type="email" />
+                                <span asp-validation-for="Email"></span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn py-3 px-4 btn-primary submit">Create</button>
+            </div>
+        </div>
+    </div>
+</div>

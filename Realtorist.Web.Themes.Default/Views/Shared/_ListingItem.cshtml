@@ -1,0 +1,31 @@
+﻿@using Realtorist.Models.Enums.LookupTypes;
+@using Realtorist.Models.Helpers;
+
+@model (Realtorist.Models.Listings.Listing listing, bool newTabLink)
+@{
+    var listing = Model.listing;
+}
+
+<a class="properties" href="@listing.GetUrl(Url)" target="@(Model.newTabLink ? "_blank" : "_self")" data-listing-id="@listing.Id">
+    <div class="img">
+        <img src="@(listing.Photos?.FirstOrDefault()?.Url ?? Url.Content("~/images/no-image-found.png"))" class="img-fluid" alt="@(listing.Address.AddressDisplayString) - @(listing.TransactionType.HasValue ? listing.TransactionType.Value.GetLookupDisplayText() : "for sale")">
+    </div>
+    <div class="desc">
+        <div class="text bg-primary d-flex text-center align-items-center justify-content-center">
+            <span>@(listing.TransactionType != TransactionType.For_sale ? "Rent" : "Sale")</span>
+        </div>
+        <div class="d-flex pt-5">
+            <div class="flex-fill">
+                    <h4 class="price">$@(listing.GetPriceString())</h4>
+            </div>
+            <div class="pl-md-4 details">
+                <span title="@(listing.Building.BedroomsTotal ?? 0) Bedrooms">@(listing.Building.BedroomsTotal ?? 0) <i class="icon-bed"></i></span>
+                <span title="@(listing.Building.BathroomTotal ?? 0) Bathrooms">@(listing.Building.BathroomTotal ?? 0) <i class="icon-bath"></i></span>
+            </div>
+        </div>
+        <div class="h-info">
+            <div class="address">@(listing.Address.StreetAddress)</div>
+            <div class="location">@(listing.Address.City), @(listing.Address.Province), @(listing.Address.PostalCode)</div>
+        </div>
+    </div>
+</a>

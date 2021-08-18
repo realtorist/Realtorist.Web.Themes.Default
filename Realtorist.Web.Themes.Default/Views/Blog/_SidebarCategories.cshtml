@@ -1,0 +1,12 @@
+@inject IBlogDataAccess DataAccess
+
+<div class="sidebar-box ftco-animate">
+    <h3 class="heading-sidebar">Categories</h3>
+    <ul class="categories">
+        @foreach (var category in await DataAccess.GetCategoriesAsync())
+        {
+            <li><a href="@Url.Action("Category", "Blog", new { category = category.Key })" rel="category">@category.Key
+                    <span>(@category.Value)</span></a></li>
+        }
+    </ul>
+</div>

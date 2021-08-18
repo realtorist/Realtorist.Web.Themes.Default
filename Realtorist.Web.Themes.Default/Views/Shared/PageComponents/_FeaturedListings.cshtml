@@ -1,0 +1,25 @@
+@model Dictionary<string, JToken>
+@inject IListingsDataAccess DataAccess
+@{
+    int maxListings = Model?.GetValueOrDefault("max")?.ToObject<int>() ?? 10;
+    bool takeRandomIfNotEnough = Model?.GetValueOrDefault("takeRandomIfNotEnough")?.ToObject<bool>() ?? false;
+    var listings = await DataAccess.GetFeaturedListingsAsync(maxListings, takeRandomIfNotEnough);
+}
+@if (!listings.IsNullOrEmpty())
+{
+    <section class="ftco-section ftco-properties featured-listing-component ftco-animate"
+         id="properties-section">
+    <div class="container">
+        <div class="row justify-content-center pb-5 title-row">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+                <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "Featured listings")</h2>
+            </div>
+        </div>
+        <div class="row listings-row">
+            <div class="col-md-12">
+                @await Html.PartialAsync("_FeaturedListingsSlider", (listings, true))
+            </div>
+        </div>
+    </div>
+</section>
+}

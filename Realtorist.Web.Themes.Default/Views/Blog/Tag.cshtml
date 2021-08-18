@@ -1,0 +1,11 @@
+@model (string, PaginationResult<Post>)
+
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-lg-12 ftco-animate">
+            <h1 class="text-center">Blog posts with tag '@Model.Item1'</h1>
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_Posts", Model.Item2)

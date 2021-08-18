@@ -1,0 +1,8 @@
+@inject IBlogDataAccess DataAccess
+@{
+    var tags = await DataAccess.GetTagsAsync();
+}
+<div class="sidebar-box ftco-animate">
+    <h3 class="heading-sidebar">Tag Cloud</h3>
+    @await Html.PartialAsync("_TagCloud", tags)
+</div>

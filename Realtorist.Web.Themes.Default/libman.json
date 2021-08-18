@@ -1,0 +1,158 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "magnific-popup.js@1.1.0",
+      "destination": "wwwroot/lib/magnific-popup.js/"
+    },
+    {
+      "library": "jquery-easing@1.4.1",
+      "destination": "wwwroot/lib/jquery-easing/"
+    },
+    {
+      "library": "stellar.js@0.6.2",
+      "destination": "wwwroot/lib/stellar.js/"
+    },
+    {
+      "library": "waypoints@4.0.1",
+      "destination": "wwwroot/lib/waypoints/"
+    },
+    {
+      "library": "popper.js@1.15.0",
+      "destination": "wwwroot/lib/popper.js/"
+    },
+    {
+      "library": "aos@2.3.4",
+      "destination": "wwwroot/lib/aos/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "animate.css@4.1.1",
+      "destination": "wwwroot/lib/animate.css/",
+      "files": [
+        "animate.compat.css",
+        "animate.css",
+        "animate.min.css",
+        "LICENSE",
+        "package.json",
+        "README.md"
+      ]
+    },
+    {
+      "library": "open-iconic@1.1.1",
+      "destination": "wwwroot/lib/open-iconic/",
+      "files": [
+        "font/css/open-iconic.min.css",
+        "font/css/open-iconic-bootstrap.css",
+        "font/css/open-iconic-bootstrap.min.css",
+        "font/css/open-iconic-foundation.css",
+        "font/css/open-iconic-foundation.min.css",
+        "font/css/open-iconic.css",
+        "font/fonts/open-iconic.eot",
+        "font/fonts/open-iconic.otf",
+        "font/fonts/open-iconic.svg",
+        "font/fonts/open-iconic.ttf",
+        "font/fonts/open-iconic.woff"
+      ]
+    },
+    {
+      "provider": "unpkg",
+      "library": "bootstrap@4.2.1",
+      "destination": "wwwroot/lib/bootstrap/"
+    },
+    {
+      "library": "jquery@3.2.1",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "jquery-migrate@3.0.1",
+      "destination": "wwwroot/lib/jquery-migrate/"
+    },
+    {
+      "library": "OwlCarousel2@2.3.4",
+      "destination": "wwwroot/lib/OwlCarousel2/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "leaflet@1.7.1",
+      "destination": "wwwroot/lib/leaflet/",
+      "files": [
+        "dist/leaflet-src.esm.js",
+        "dist/leaflet-src.esm.js.map",
+        "dist/leaflet-src.esm.min.js",
+        "dist/leaflet-src.js",
+        "dist/leaflet-src.js.map",
+        "dist/leaflet-src.min.js",
+        "dist/leaflet.css",
+        "dist/leaflet.js",
+        "dist/leaflet.js.map",
+        "dist/leaflet.min.css",
+        "dist/leaflet.min.js",
+        "dist/reference-1.6.0-newleafdoc.html",
+        "dist/reference-1.6.0-oldleafdoc.html",
+        "dist/reference-1.6.0.html",
+        "dist/images/layers-2x.png",
+        "dist/images/layers.png",
+        "dist/images/marker-icon-2x.png",
+        "dist/images/marker-icon.png",
+        "dist/images/marker-shadow.png",
+        "CHANGELOG.md",
+        "LICENSE",
+        "package.json",
+        "README.md"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "google-charts@2.0.0",
+      "destination": "wwwroot/lib/google-charts"
+    },
+    {
+      "library": "inputmask@4.0.9",
+      "destination": "wwwroot/lib/inputmask/"
+    },
+    {
+      "library": "jquery-ajax-unobtrusive@3.2.6",
+      "destination": "wwwroot/lib/jquery-ajax-unobtrusive/"
+    },
+    {
+      "library": "leaflet.markercluster@1.4.1",
+      "destination": "wwwroot/lib/leaflet.markercluster/",
+      "files": [
+        "leaflet.markercluster.js",
+        "MarkerCluster.css",
+        "MarkerCluster.Default.css"
+      ]
+    },
+    {
+      "library": "Leaflet.awesome-markers@2.0.2",
+      "destination": "wwwroot/lib/Leaflet.awesome-markers/"
+    },
+    {
+      "library": "corejs-typeahead@1.3.1",
+      "destination": "wwwroot/lib/corejs-typeahead/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "typeahead-address-photon@1.1.0",
+      "destination": "wwwroot/lib/typeahead-address-photon/",
+      "files": [
+        ".babelrc",
+        ".editorconfig",
+        ".jshintrc",
+        ".travis.yml",
+        "LICENSE",
+        "package.json",
+        "README.md",
+        "rollup.config.js",
+        "dist/bundle.js",
+        "dist/bundle.min.js",
+        "dist/formatter.js",
+        "dist/Options.js",
+        "dist/PhotonAddressEngine.js",
+        "dist/typeahead-address-photon.js"
+      ]
+    }
+  ]
+}

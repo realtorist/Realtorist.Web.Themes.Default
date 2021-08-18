@@ -1,0 +1,10 @@
+﻿@model (bool fullscreen, bool backdrop, bool shown, string id)
+<div class="@(Model.fullscreen ? "fullscreen " : string.Empty)@(Model.shown ? "show  " : string.Empty) ftco-loader"  id="@Model.id">
+    @if (Model.backdrop)
+    {
+        <div class="backdrop"></div>
+    }
+    <div class="circular">
+        <svg width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee" /><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00" /></svg>
+    </div>
+</div>

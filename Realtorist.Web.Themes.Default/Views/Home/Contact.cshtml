@@ -1,0 +1,37 @@
+﻿@using Realtorist.Models.Listings
+@using Realtorist.Models.Dto
+@using Realtorist.Models.Enums.LookupTypes
+@using Realtorist.Models.Helpers
+@model RequestInformationModel
+@{
+    ViewData["title"] = $"Contact me";
+    if (Context.Request.Query.TryGetValue("buyerType", out var buyerTypeString) 
+        && Enum.TryParse<Iam>(buyerTypeString, true, out var buyerType))
+    {
+        Model.Iam = buyerType;
+    }
+}
+
+<section class="ftco-section ftco-services-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center mb-md-5 mt-md-5">
+                <h1>Contact me</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 property-wrap mb-2">
+                <div class="row">
+                    <div class="col-md-12 ftco-animate">
+                        <h5 class="mb-4">
+                            Please contact me using the form below to get help with your search!
+                        </h5>
+                        <div>
+                            @await Html.PartialAsync("_RequestInformationForm", Model)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> <!-- .section -->

@@ -1,0 +1,93 @@
+﻿@using Realtorist.Models.Dto
+@model RequestInformationModel
+@{
+    ViewData["title"] = $"Contact me";
+    ViewData["disabledRequestTypes"] = Enum.GetValues<RequestType>().Where(x => x != RequestType.WhatsMyHouseWorths).ToArray();
+}
+
+<section class="ftco-section ftco-services-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 text-center mb-md-3 mt-md-3">
+                <h1>What's my home worth?</h1>
+                <h5>Request a free home evaluation now!</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 mb-2">
+                <div class="row home-worthftco-animate" id="address-wrapper">
+                    <div class="col-md-12 mb-3 text-center">
+                        <h2>Please enter your house address below:</h2>
+                    </div>
+                    <div class="col-md-12 form-field input-group">
+                        <input type="text" id="home-worth-address" class="form-control form-control-lg" />
+                        <div class="input-group-append">
+                            <button id="select-address" class="btn btn-primary btn-lg">Go</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row ftco-animate hide" id="contact-form-wrapper">
+                    <div class="col-md-12 mb-3">
+                        <a href="#" id="go-back"><i class="icon-chevron-left"></i> Change address</a>
+                    </div>
+                    <div class="col-md-12 ">
+                        <h5 class="mb-4">
+                            Please contact me with details of your home so I can provide you with your free home evaluation!
+                        </h5>
+                        <div>
+                            <partial name="_RequestInformationForm"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> <!-- .section -->
+
+@section AdditionalScripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#home-worth-address').typeahead(null,
+                {
+                    source: getAddressSuggestionsEngine().ttAdapter(),
+                    name: addressesDatasetName,
+                });
+
+            function selectAddress(address) {
+                $('#contact-form-wrapper').fadeIn();
+                $('#address-wrapper').fadeOut();
+
+                $('#contact-form-wrapper .request-information-form #request-form-address').val(address);
+                $('#contact-form-wrapper .request-information-form #request-form-type').trigger('change');
+            }
+
+            function goBack() {
+                $('#contact-form-wrapper').fadeOut();
+                $('#address-wrapper').fadeIn();
+            }
+
+            $('#go-back').click(function (event) {
+                event.preventDefault();
+                goBack();
+            });
+
+            $('#select-address').click(function () {
+                selectAddress($('#home-worth-address').val());
+            });
+
+            @*$('#home-worth-address').keyup(function (event) {
+                if (event.keyCode === 13) selectAddress($(this).val());
+            });*@
+
+            $('#home-worth-address').bind('typeahead:select', function (event, selected, dataset) {
+                selectAddress(selected);
+            });
+
+            var existingAddress = getQueryParameterByName('Address');
+            if (!!existingAddress) {
+                $('#home-worth-address').val(existingAddress);
+                selectAddress(existingAddress);
+            }
+        });
+    </script>
+}

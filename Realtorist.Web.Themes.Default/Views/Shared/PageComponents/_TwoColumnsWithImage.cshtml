@@ -1,0 +1,39 @@
+@model Dictionary<string, JToken>
+
+<section class="ftco-section two-columns-with-image-component">
+    <div class="container">
+        <div class="row no-gutters d-flex @(Model?.GetValueOrDefault("reverse")?.ToObject<bool?>() ?? false ? "flex-row-reverse": "")">
+            <div class="col-md-6 col-lg-5 d-flex image-column ftco-animate">
+                <img src="@(Model?.GetValueOrDefault("image")?.ToObject<string>() ?? "images/about.jpg")" class="image mt-5"/>
+            </div>
+            <div class="col-md-6 col-lg-7 px-lg-5">
+                <div class="">
+                    <div class="row justify-content-start pb-3">
+                        <div class="col-md-12 heading-section ftco-animate p-3 pt-5">
+                            @{
+                                var title = Model?.GetValueOrDefault("title")?.ToObject<string>();
+                            }
+                            @if (!title.IsNullOrEmpty()) {
+                                <h2 class="mb-4">@title</h2>
+                            }
+
+                            @await Html.PartialAsync("_HtmlEditorDisplay", Model?.GetValueOrDefault("text")?.ToObject<string>() ?? "")                            
+                            @{
+                                var links = Model?.GetValueOrDefault("links")?.ToObject<MenuItemSingle[]>() ?? new MenuItemSingle[0];
+                                if (!links.IsNullOrEmpty())
+                                {
+                                    <p>
+                                        @foreach(var link in links)
+                                        {
+                                            <a href="@link.Link" class="btn btn-primary py-3 px-4">@link.Title</a>
+                                        }
+                                    </p>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,76 @@
+﻿@using CaptureRenderTagHelper.Extensions;
+
+@model string
+@inject ISettingsProvider SettingsProvider
+@{
+      var settings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+      var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile); 
+      var social = await SettingsProvider.GetSettingAsync<SocialSettings>(SettingTypes.Social);
+      var themeSettings = await SettingsProvider.GetSettingAsync<ThemeSettings>(AppearanceSettingTypes.ThemeSettings);
+      var keywords = !settings.WebsiteKeywords.IsNullOrEmpty() ? string.Join(", ", settings.WebsiteKeywords) : string.Empty;
+
+      var featuredImage = settings.SocialSharingImage ?? themeSettings.HeroLogo ?? settings.Logo;
+
+      var websiteAddress = $"{(Context.Request.IsHttps ? "https" : "http")}://{settings.WebsiteAddress}";
+      if (ViewData.ContainsKey("featuredImage"))
+      {
+            featuredImage = (string)ViewData["featuredImage"];
+      }
+
+      var title = $"{(!Model.IsNullOrEmpty() ? Model + ". " : "")}{settings.WebsiteName} - {settings.WebsiteTitle}".Trim();
+      var description = $"{ViewData["description"]} {settings.WebsiteDescription}".Trim();
+}
+
+<head>
+      <title>@title</title>
+      <meta charset="utf-8" />
+      <meta name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+      <meta name="keywords"
+            content="@keywords, @ViewData["keywords"]" />
+      <meta name="description"
+            content="@description" />
+      
+      @if ((bool?)ViewData["usesFeaturedImageInMeta"] != true && !featuredImage.IsNullOrEmpty())
+      {
+            <meta name="twitter:card" content="gallery">
+            <meta name="twitter:title" content="@title">
+            <meta name="twitter:description" content="@description">
+            <meta name="twitter:domain" content="@settings.WebsiteAddress">
+            <meta property="og:image" content="@featuredImage"/>
+            <meta name="twitter:image0" content="@featuredImage">
+      }
+
+      @if (Html.HasCaptured("Meta"))
+      {
+            <container render="Meta"></container>
+      }
+
+      @if (Html.HasCaptured("json-ld"))
+      {
+            <script type="application/ld+json" render="json-ld"></script>
+      }
+      else
+      {
+            <script type="application/ld+json">
+                  @Html.Raw(JsonLdHelper.GetDafaultJsonLdProperties(settings, profile, social))
+            </script>
+      }
+
+      <link href="https://fonts.googleapis.com/css?family=Lora:100,200,300,400,500,600,700,800,900"
+            rel="stylesheet" />
+      <link rel="alternate"
+            type="application/rss+xml"
+            title="RSS Blog Feed"
+            href="@Url.Action("Rss", "Blog")" />
+
+      <meta name="date"
+            content="@DateTime.Now" />
+
+      <link rel="stylesheet"
+            href="/css/lib.css" />
+      <link rel="stylesheet"
+            href="/css/styles.css" />
+      <link rel="icon"
+            href="@(settings.Favicon ?? ResourceHelper.ContentPrefix + "/images/icon.png")" />
+</head>

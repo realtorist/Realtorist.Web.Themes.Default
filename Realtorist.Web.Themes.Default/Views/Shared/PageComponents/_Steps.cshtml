@@ -1,0 +1,48 @@
+@model Dictionary<string, JToken>
+@{
+    var steps = Model?.GetValueOrDefault("steps")?.ToObject<JToken[]>() ?? new JToken[0];
+    var stepWidth = 12 / steps.Length;
+    var classes = new Dictionary<int, int>
+    {
+        { 1, 5 },
+        { 2, 4 },
+        { 3, 0 },
+    };
+}
+@if (!steps.IsNullOrEmpty())
+{
+    <section class="ftco-section ftco-services-2 bg-light services-component"
+         id="workflow-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-@stepWidth heading-section ftco-animate">
+                <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "")</h2>
+                <p>@(Model?.GetValueOrDefault("subTitle")?.ToObject<string>() ?? "")</p>
+
+                <div class="media block-6 services text-center d-block pt-md-5 mt-md-5 justify-content-center ">
+                    <div class="icon justify-content-center align-items-center d-flex"><span>1</span></div>
+                    <div class="media-body p-md-3">
+                        <h3 class="heading mb-3">@(steps[0]["title"].ToObject<string>())</h3>
+                        <p class="mb-5">@(steps[0]["text"].ToObject<string>())</p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            @for (var i = 1; i < steps.Length && i < 4; i++)
+                {
+                    var p = i + 4 - steps.Length;
+                    <div class="col-md-@stepWidth d-flex align-self-stretch justify-content-center ftco-animate mt-lg-@classes[p]">
+                        <div class="media block-6 services text-center d-block mt-lg-@classes[i] pt-md-@classes[p]">
+                            <div class="icon justify-content-center align-items-center d-flex"><span>@(i+1)</span></div>
+                            <div class="media-body p-md-3">
+                                <h3 class="heading mb-3">@(steps[i]["title"].ToObject<string>())</h3>
+                                <p class="mb-5">@(steps[i]["text"].ToObject<string>())</p>
+                                <hr>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}

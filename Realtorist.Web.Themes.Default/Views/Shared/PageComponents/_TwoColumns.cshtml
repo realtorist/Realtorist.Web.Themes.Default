@@ -1,0 +1,49 @@
+@model Dictionary<string, JToken>
+@{
+    var title = Model?.GetValueOrDefault("title")?.ToObject<string>();
+}
+
+<section class="ftco-section two-columns-component">
+    <div class="container">
+        @if (!title.IsNullOrEmpty())
+        {
+            <div class="row justify-content-center mb-3 pb-3 title-row">
+                <div class="col-12 heading-section text-center ftco-animate">
+                    <h2 class="mb-4">@(title)</h2>
+                </div>
+            </div>
+        }
+        <div class="row d-flex">
+            <div class="col-md-6 left-column ftco-animate">
+                @await Html.PartialAsync("_HtmlEditorDisplay", Model?.GetValueOrDefault("leftText")?.ToObject<string>() ?? "") 
+                    @{
+                        var leftLinks = Model?.GetValueOrDefault("leftLinks")?.ToObject<MenuItemSingle[]>() ?? new MenuItemSingle[0];
+                        if (!leftLinks.IsNullOrEmpty())
+                        {
+                            <p>
+                                @foreach (var link in leftLinks)
+                                {
+                                    <a href="@link.Link" class="btn btn-primary py-3 px-4">@link.Title</a>
+                                }
+                            </p>
+                        }
+                    }
+            </div>
+            <div class="col-md-6 right-column ftco-animate">
+                @await Html.PartialAsync("_HtmlEditorDisplay", Model?.GetValueOrDefault("rightText")?.ToObject<string>() ?? "")
+                @{
+                    var rightLinks = Model?.GetValueOrDefault("rightLinks")?.ToObject<MenuItemSingle[]>() ?? new MenuItemSingle[0];
+                    if (!rightLinks.IsNullOrEmpty())
+                    {
+                        <p>
+                            @foreach(var link in rightLinks)
+                            {
+                                <a href="@link.Link" class="btn btn-primary py-3 px-4">@link.Title</a>
+                            }
+                        </p>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</section>

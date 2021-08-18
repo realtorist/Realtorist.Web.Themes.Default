@@ -1,0 +1,25 @@
+$font-primary: 'Lora',Arial, sans-serif;
+
+$white: #fff;
+$black: #000000;
+$darken: #232931;
+
+$primary: #DBC1AD !default;
+//$primary: #d4a59a;
+//$primary: #ffb48F;
+//$primary: #d9b08c;
+//$primary: #1E212B;
+//$primary: #140F2D;
+//$primary: #30343F; //blackish
+//$primary: #edc7b7;
+//$primary: #daad86;
+$primary-alternative: #bc986A !default;
+$primary-text: #30343F !default;
+//$primary-alternative: #efdecd;
+$secondary: #e88941 !default;
+
+$black: $primary-text;
+$home-page-background: '../images/background-main.jpg' !default;
+$home-page-background-backdrop-opacity: 30;
+$home-page-navbar-color: $primary-alternative !default;
+//$primary: #f7a0a0;

@@ -1,0 +1,76 @@
+@inject ISettingsProvider SettingsProvider
+@model Dictionary<string, JToken>
+<section class="ftco-section contact-section ftco-no-pb contact-form-with-sidebar-component"  id="contact-section">
+    <div class="container">
+        <div class="row justify-content-center mb-3 pb-3 title-row">
+            <div class="col-md-7 heading-section text-center ftco-animate">
+                <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "Contact Me")</h2>
+                <p>@(Model?.GetValueOrDefault("subTitle")?.ToObject<string>() ?? "")</p>
+            </div>
+        </div>
+
+        <div class="row block-9 bg-light">
+            <div class="col-md-9 order-md-last d-flex ftco-animate">
+                <div class="p-4 p-md-5 contact-form">
+                    @await Html.PartialAsync("_RequestInformationForm", new
+                    Realtorist.Models.Dto.RequestInformationModel())
+                </div>
+            </div>
+
+            <div class="col-md-3 d-flex sidebar-column">
+                @{
+                    var siteUrl = $"{Context.Request.Scheme}://{Context.Request.Host}";
+                    var settings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+                    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+                }
+                <div class="row d-flex contact-info mb-5 pt-5 pb-5 align-items-center">
+                    <div class="col-md-12 ftco-animate address-column">
+                        <div class="box p-2 px-3  d-flex">
+                            <div class="icon mr-3">
+                                <span class="icon-map-signs"></span>
+                            </div>
+                            <div>
+                                <h3 class="mb-3">Address</h3>
+                                <p>@(profile.Address)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ftco-animate phone-column">
+                        <div class="box p-2 px-3 d-flex">
+                            <div class="icon mr-3">
+                                <span class="icon-phone2"></span>
+                            </div>
+                            <div>
+                                <h3 class="mb-3">Contact Number</h3>
+                                <p><a href="tel:@profile.Phone">@(profile.Phone.FormatPhoneNumber())</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ftco-animate email-column">
+                        <div class="box p-2 px-3 d-flex">
+                            <div class="icon mr-3">
+                                <span class="icon-paper-plane"></span>
+                            </div>
+                            <div>
+                                <h3 class="mb-3">Email Address</h3>
+                                <p><a href="mailto:@(profile.Email)">@(profile.Email)</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 ftco-animate website-column">
+                        <div class="box p-2 px-3 d-flex">
+                            <div class="icon mr-3">
+                                <span class="icon-globe"></span>
+                            </div>
+                            <div>
+                                <h3 class="mb-3">Website</h3>
+                                <p><a href="@siteUrl">@settings.WebsiteAddress</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

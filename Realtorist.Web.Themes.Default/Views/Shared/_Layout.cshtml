@@ -1,0 +1,17 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("_HtmlHead", (string)ViewData["title"])
+<body>
+    @await Html.PartialAsync("_ContactInformationTop")
+    @await Html.PartialAsync("_Navigation", (true, false, false))
+
+    @RenderBody()
+
+    @await Html.PartialAsync("_Footer")
+    @await Html.PartialAsync("_Loader", (true, false, true, "page-loader")))
+    @await Html.PartialAsync("_ShareDialog")
+
+    @await Html.PartialAsync("_Scripts")
+    @await RenderSectionAsync("AdditionalScripts", false)
+</body>
+</html>

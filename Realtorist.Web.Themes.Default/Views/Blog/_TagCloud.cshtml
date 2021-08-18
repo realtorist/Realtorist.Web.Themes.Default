@@ -1,0 +1,7 @@
+@model IEnumerable<String>
+<div class="tagcloud">
+    @foreach (var tag in Model)
+    {
+        <a href="@Url.Action("Tag", "Blog", new { tag = tag })" class="tag-cloud-link">@tag</a>
+    }
+</div>

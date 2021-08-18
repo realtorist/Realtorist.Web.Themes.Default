@@ -1,0 +1,51 @@
+@model Dictionary<string, JToken>
+@{
+    var services = Model?.GetValueOrDefault("services")?.ToObject<JToken[]>() ?? new JToken[0];
+    var serviceWidth = 12 / services.Length;
+}
+<section class="ftco-section ftco-services-2 bg-light services-component"
+         id="services-section">
+    <div class="container">
+        <div class="row justify-content-center pb-5 title-row">
+            <div class="col-md-12 heading-section text-center ftco-animate">
+                <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "Our Services")</h2>
+                <p>@(Model?.GetValueOrDefault("subTitle")?.ToObject<string>() ?? "")</p>
+            </div>
+        </div>
+        <div class="row services-row">
+            @{
+                var k = 0;
+            }
+            @foreach (var service in services)
+            {
+                var link = service["link"]?.ToObject<string>();
+                <div class="col-md-@serviceWidth d-flex align-self-stretch ftco-animate justify-content-center service-block service-number-@(++k)">
+                    @if (link.IsNullOrEmpty())
+                    {
+                        <div class="media block-6 services text-center d-block">
+                                <div class="icon justify-content-center align-items-center d-flex">
+                                    <span class="flaticon-@(service["icon"].ToObject<string>())"></span>
+                            </div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">@(service["title"].ToObject<string>())</h3>
+                                <p>@(service["text"].ToObject<string>())</p>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a href="@link" class="media block-6 services text-center d-block">
+                            <div class="icon justify-content-center align-items-center d-flex">
+                                <span class="flaticon-@(service["icon"].ToObject<string>())"></span>
+                            </div>
+                            <div class="media-body">
+                                <h3 class="heading mb-3">@(service["title"].ToObject<string>())</h3>
+                                <p>@(service["text"].ToObject<string>())</p>
+                            </div>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>

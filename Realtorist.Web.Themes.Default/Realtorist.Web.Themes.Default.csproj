@@ -1,0 +1,63 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
+    <IsPackable>true</IsPackable>
+    <PackageId>Realtorist.Web.Themes.Default</PackageId>
+    <Version>0.0.1</Version>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="bundles.json" />
+  </ItemGroup>
+
+
+   <ItemGroup>
+      <EmbeddedResource Include="wwwroot\**\*" />
+   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Realtorist.Models" Version="0.0.1" />
+    <PackageReference Include="Realtorist.DataAccess.Abstractions" Version="0.0.1" />
+    <PackageReference Include="Realtorist.GeoCoding.Abstractions" Version="0.0.1" />
+    <PackageReference Include="Realtorist.Services.Abstractions" Version="0.0.1" />
+    <PackageReference Include="Realtorist.RetsClient.Abstractions" Version="0.0.1" />
+
+    <PackageReference Include="Realtorist.Web.Helpers" Version="0.0.1" />
+    <PackageReference Include="Realtorist.Web.Models" Version="0.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ExtCore.Mvc.Infrastructure" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CaptureRenderTagHelper" Version="1.0.0" />
+    <PackageReference Include="LazZiya.TagHelpers" Version="5.0.0" />
+    <PackageReference Include="LigerShark.WebOptimizer.Core" Version="3.0.313" />
+    <PackageReference Include="LigerShark.WebOptimizer.Sass" Version="3.0.58-beta" />
+    <PackageReference Include="LigerShark.WebOptimizer.TypeScript" Version="2.5.10-beta" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="5.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="5.0.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+        <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+            <Link>$(Filename)$(Extension)</Link>
+        </Content>
+    </ItemGroup>
+
+
+</Project>

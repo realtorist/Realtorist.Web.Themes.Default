@@ -1,0 +1,152 @@
+﻿@model Post
+@inject IBlogDataAccess DataAccess
+@inject ISettingsProvider SettingsProvider
+@{ 
+    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+    var websiteSettings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+}
+
+<section class="ftco-section blog-post">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-lg-8 ftco-animate">
+                <h1 class="mb-2">@Model.Title</h1>
+                <div class="breadcrumbs">
+                    <a href="@Url.Action("Category", "Blog", new { category = Model.Category })" rel="category tag">@Model.Category</a>
+                </div>
+                <div class="timestamp mb-2">@websiteSettings.GetDateTimeInTimeZoneFromUtc(Model.PublishDate).ToString("MMMM dd, yyyy")</div>
+                @if(!Model.SubTitle.IsNullOrEmpty()) 
+                {
+                    <h2 class="mb-3">@Model.SubTitle</h2>
+                }
+                <p>
+                    <img class="post-image" src="@Model.Image" alt="@Model.Title - @Model.SubTitle" class="img-fluid">
+                </p>
+                <div>@await Html.PartialAsync("_HtmlEditorDisplay", Model.Text)</div>
+                <div class="tag-widget post-tag-container mb-5 mt-5">
+                    @await Html.PartialAsync("_TagCloud", Model.Tags)
+                </div>
+
+                <div class="about-author d-flex p-4 bg-light">
+                    <div class="bio mr-5">
+                        <img src="@(profile.Avatar)" alt="@(profile.FirstName) @(profile.LastName) - @(profile.ShortDescription)" class="img-fluid mb-4">
+                    </div>
+                    <div class="desc">
+                        <h3>@(profile.FirstName) @(profile.LastName)</h3>
+                        <p>@(profile.ShortDescription)</p>
+                    </div>
+                </div>
+
+                <div class="pt-5 mt-5" id="comments">
+                    <h3 class="mb-5">@(Model.Comments.Length) Comment@(Model.Comments.Length != 1 ? "s" : string.Empty)</h3>
+                    <ul class="comment-list">
+                        @foreach (var comment in Model.Comments)
+                        {
+            <li class="comment" id="comment-@comment.Id">
+                <div class="vcard bio">
+                    <img src="https://avatars.dicebear.com/api/avataaars/@(WebUtility.UrlEncode(comment.Name)).svg?eyes[]=happy&eyes[]=hearts&eyes[]=surprised&eyes[]=wink&mouth[]=smile&eyebrow[]=default" alt="Image placeholder">
+                </div>
+                <div class="comment-body">
+                    <h3 class="author">@comment.Name</h3>
+                    <div class="meta">@websiteSettings.GetDateTimeInTimeZoneFromUtc(comment.Date).ToString("f")</div>
+                    <p class="message">@comment.Message</p>
+                    <p><a href="#" onclick="reply('@comment.Id'); return false;" class="reply">Reply</a></p>
+                </div>
+            </li>}
+                    </ul>
+                    <!-- END comment-list -->
+                    @{ 
+                        var commentHtmlHelper = Html.HtmlHelperFor<Comment>();
+                    }
+                    <div class="comment-form-wrap pt-5">
+                        <h3 class="mb-5">Leave a comment</h3>
+                        <form action="@Url.Action("AddComment", "Blog", new { postId = Model.Id })" method="post" class="p-5 bg-light" id="comment-form">
+                            <div class="form-group">
+                                <label for="name">Name *</label>
+
+                                @commentHtmlHelper.TextBoxFor(m => m.Name, new { @class = "form-control", id = "name", Name = nameof(Comment.Name) })
+                                @commentHtmlHelper.ValidationMessageFor(m => m.Name)
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email *</label>
+
+                                @commentHtmlHelper.TextBoxFor(m => m.Email, new { @class = "form-control", id = "email", type = "email" })
+                                @commentHtmlHelper.ValidationMessageFor(m => m.Email)
+                            </div>
+
+                            <div class="form-group">
+                                <label for="message">Message *</label>
+
+                                @commentHtmlHelper.TextAreaFor(m => m.Message, new { @class = "form-control", id = "message", cols = "30", rows = "10" })
+                                @commentHtmlHelper.ValidationMessageFor(m => m.Message)
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Post Comment" class="btn py-3 px-4 btn-primary">
+                            </div>
+
+                        </form>
+                        @await Html.PartialAsync("_Loader", (false, true, false, "post-comment-loader"))
+                    </div>
+                </div>
+
+            </div> <!-- .col-md-8 -->
+            @await Html.PartialAsync("_Sidebar")
+
+        </div>
+    </div>
+</section> <!-- .section -->
+
+
+@section AdditionalScripts {
+    <script type="text/javascript">
+        function reply(commentId) {
+            var name = $('#comment-' + commentId + ' .author').text();
+            $('#message').val('@@' + name + '\n' + $('#message').val());
+            $('html, body').animate({
+                        scrollTop: $('#comment-form').offset().top
+            }, 900, 'swing');
+        }
+
+        $('#comment-form').on('submit', function (e) {
+            e.preventDefault();
+
+            var $form = $(this);
+            if (!$form.valid()) return;
+
+            $.ajax({
+                url: $form.attr('action'),
+                method: $form.attr('method'),
+                dataType: 'text',
+                data: JSON.stringify($form.serializeObject()),
+                contentType: 'application/json',
+                beforeSend: function () {
+                    $('#post-comment-loader').addClass('show');
+                },
+                complete: function () {
+                    $('#post-comment-loader').removeClass('show');
+                },
+                success: function (result) {
+                    showSnackBar('Thanks for your comment!');
+                    setTimeout(function () {
+                        location.hash = 'comment-' + JSON.parse(result);
+                        location.reload();
+                    }, 2000);
+                }, error: function () {
+                    showSnackBar('Something went wrong. Please try again.');
+                }
+            })
+        });
+
+        $(document).ready(function () {
+            if (window.location.hash) {
+                var hash = window.location.hash;
+
+                if ($(hash).length) {
+                    $('html, body').animate({
+                        scrollTop: $(hash).offset().top
+                    }, 900, 'swing');
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,22 @@
+@model Dictionary<string, JToken>
+@{
+    var image = Model?.GetValueOrDefault("backgroundImage")?.ToObject<string>();
+}
+<section class="ftco-intro img call-to-action-component"
+             id="hotel-section"
+             style="@(!image.IsNullOrEmpty() ? $"background-image: url({image});" : string.Empty)">
+        @if (!image.IsNullOrEmpty())
+        {
+            <div class="overlay"></div>
+        }
+        <div class="container">
+            <div class="row justify-content-end">
+                <div class="col-12 text-center">
+                    <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "Find your dream house today!")</h2>
+                    <p class="sub-title">@(Model?.GetValueOrDefault("text")?.ToObject<string>() ?? "")</p>
+                    <p class="mb-0 btn-row"><a href="@(Model?.GetValueOrDefault("link")?.ToObject<string>() ?? "/property/search")"
+                           class="btn btn-white call-to-action-btn px-4 py-3">@(Model?.GetValueOrDefault("buttonText")?.ToObject<string>() ?? "Advanced Search")</a></p>
+                </div>
+            </div>
+        </div>
+    </section>

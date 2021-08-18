@@ -1,0 +1,44 @@
+@model Page
+@{
+    ViewData["keywords"] = !Model.Keywords.IsNullOrEmpty() ? string.Join(", ", Model.Keywords) : string.Empty;
+    ViewData["description"] = Model.Description;
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("_HtmlHead", Model.Title)
+
+@if (!Model.AdditionalCss.IsNullOrEmpty())
+{
+    <style type="text/css">
+        @Html.Raw(Model.AdditionalCss)
+    </style>
+}
+
+<body>
+    @await Html.PartialAsync("_ContactInformationTop")
+
+    @if (Model.Configuration.TryGetValue("header", out var header) && header.Equals(true))
+    {
+        @await Html.PartialAsync("_Navigation", (true, false, false))
+    }
+
+
+    @foreach (var component in Model.Components)
+    {
+        @await Html.PartialAsync("PageComponents/_" + component.Type, component.Values);
+    }
+
+    @if (Model.Configuration.TryGetValue("footer", out var footer) && footer.Equals(true))
+    {
+        @await Html.PartialAsync("_Footer")
+    }
+
+    @await Html.PartialAsync("_Loader", (true, false, true, "page-loader"))
+    @await Html.PartialAsync("_ShareDialog")
+
+    @await Html.PartialAsync("_Scripts")
+</body>
+
+</html>

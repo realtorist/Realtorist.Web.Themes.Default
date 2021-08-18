@@ -1,0 +1,415 @@
+﻿@using Realtorist.Models.Listings
+@using Realtorist.Models.Dto
+@using Realtorist.Models.Enums.LookupTypes
+@using Realtorist.Models.Helpers
+@using Realtorist.Models.Listings.Details
+
+@inject ISettingsProvider SettingsProvider
+@inject IListingsDataAccess DataAccess
+
+@model Listing
+@{
+    var pageTitle = $"{(Model.TransactionType.HasValue ? (Model.TransactionType.Value.GetLookupDisplayText() + ": ") : string.Empty)}{Model.Address.AddressDisplayString} at ${Model.GetPriceString()}";
+    ViewData["title"] = pageTitle;
+    ViewData["disabledRequestTypes"] = new[] { RequestType.WhatsMyHouseWorths, RequestType.Generic };
+
+    var pageDescription = $"{pageTitle}. {Model.Building.BedroomsTotal}  bed, {Model.Building.BathroomTotal} bath";
+    ViewData["description"] = pageDescription;
+
+    ViewData["usesFeaturedImageInMeta"] = true;
+
+    var settings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+    var listingsSettings = await SettingsProvider.GetSettingAsync<ListingsSettings>(SettingTypes.Listings);
+    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile); 
+    var social = await SettingsProvider.GetSettingAsync<SocialSettings>(SettingTypes.Social);
+    var showCreateAccountModal = settings.AccountRequired && !Context.Request.Cookies.ContainsKey(Constants.CreateAccountCookieName);
+
+    var defaultPhoto = !Model.Photos.IsNullOrEmpty() ? Model.Photos[0].Url : Url.ContentAbsolute("~/images/no-image-found.png");
+    var websiteAddress = $"{(Context.Request.IsHttps ? "https" : "http")}://{settings.WebsiteAddress}";
+
+    if (!Model.Photos.IsNullOrEmpty())
+    {
+        ViewData["featuredImage"] = Model.Photos[0].Url;
+    }
+}
+
+<container capture="Meta" nooutputtag="true">
+    <meta name="twitter:card" content="gallery">
+    @{
+        var k = 0;
+    }
+    @foreach (var photo in !Model.Photos.IsNullOrEmpty() ? Model.Photos : new[] { new Photo { Url = Url.Content("~/images/no-image-found.png")}})
+    {
+        <meta name="twitter:image@(k)" content="@photo.Url">
+        <meta property="og:image" content="@photo.Url">
+        k++;
+    }
+    <meta name="twitter:title" content="@pageTitle">
+    <meta name="twitter:description" content="@pageDescription">
+    <meta name="twitter:domain" content="@settings.WebsiteAddress">
+    <meta property="og:type" content="place">
+    <meta property="og:site_name" content="@settings.WebsiteName">
+    <meta property="og:title" content="@pageTitle">
+    <meta property="og:description" content="@pageDescription">
+    <meta property="og:url" content="@Model.GetUrlAbsolute(Url)">
+    <meta property="place:street_address" content="@Model.Address.StreetAddress">
+    <meta property="place:locality" content="@Model.Address.City">
+    <meta property="place:region" content="@Model.Address.Province">
+    <meta property="place:postal_code" content="@Model.Address.PostalCode">
+    @if (!Model.Address.Coordinates.IsNullOrEmpty())
+    {
+        <meta property="place:location:latitude" content="@Model.Address.Coordinates.Latitude" />
+        <meta property="place:location:longitude" content="@Model.Address.Coordinates.Longitude" />
+    }
+</container>
+<script capture="json-ld" type="application/ld+json">
+    [          
+        {
+          "@@context": "http://schema.org",
+          "@@type": "Product",
+          "name": "@Model.Address.AddressDisplayString",
+          "description": "@pageDescription",
+          "sku": "@Model.MlsNumber",
+           "offers": {
+            "@@type": "Offer",
+            "price": "@Model.Price",
+            "priceCurrency": "CAD", 
+            "url": "@Model.GetUrlAbsolute(Url)"
+          },
+          "image": "@defaultPhoto"
+        },
+        {
+            "@@context": "http://schema.org",
+            "@@type": "Residence",
+            "address": {
+            "@@type": "PostalAddress",
+            "streetAddress": "@Model.Address.StreetAddress",
+            "addressLocality": "@Model.Address.Neighbourhood",
+            "addressRegion": "@Model.Address.City"
+            }
+        },
+        @Html.Raw(JsonLdHelper.GetDafaultJsonLdProperties(settings, profile, social))
+    ]
+</script>
+
+<nav class="navbar navbar-expand-lg ftco_navbar ftco-navbar-light site-navbar-target request-information">
+    <div class="container">
+        <div class="p-2 text-center w-100">
+            <h5>
+                @*<a href="#requestInformationModal" data-toggle="modal" data-backdrop="static" data-keyboard="false" data-listing-id="@(Model.ID)" data-address="@(Model.Address.GetFullAddress())">Interested in this Property?</a>*@
+                <a href="#request-form-property">Interested in this Property?</a>
+            </h5>
+        </div>
+    </div>
+</nav>
+<section class="ftco-section ftco-services-2">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 offset-md-2 text-center">
+                <h1>@(Model.Address.StreetAddress)</h1>
+                <h6>@(Model.Address.City), @(Model.Address.Province), @(Model.Address.PostalCode)</h6>
+            </div>
+            <div class="col-md-2 text-md-right header-buttons">
+                <span class="link"><span class="share-button" title="Share" data-title="@ViewData["title"]"><i class="icon-share2"></i></span></span>
+                @if (!Model.Address.Coordinates.IsNullOrEmpty())
+                {
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=@(Model.Address.Coordinates.Latitude)%2c@(Model.Address.Coordinates.Longitude)" target="_blank" class="link" title="Get directions"><i class="icon-compass"></i></a>
+                }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12 property-wrap mb-2">
+                <div class="row">
+                    <div class="col-md-12 d-flex ftco-animate">
+                        <div class="carousel-photos owl-carousel mb-4">
+                            @foreach (var photo in !Model.Photos.IsNullOrEmpty() ? Model.Photos : new[] { new Photo { Url = Url.Content("~/images/no-image-found.png")}})
+                            {
+                                <div class="item">
+                                    <div class="photos ftco-animate">
+                                        <a class="img align-self-stretch" href="@(photo.Url)">
+                                            <img src="@(photo.Url)" title="@(photo.Description)" class="img-fluid image-popup" alt="@(Model.Address.AddressDisplayString) - @(Model.TransactionType.HasValue ? Model.TransactionType.Value.GetLookupDisplayText() : "for sale")">
+                                        </a>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 ftco-animate">
+                        <div class="text">
+                            <div class="row mb-3">
+                                <div class="col-md-8">
+                                    <div class="property-icons">
+                                        @{
+
+                                            var propertyType = (Model.PropertyType ?? PropertyType.Other).GetLookupDisplayText();
+                                        }
+                                        <div title="@(Model.Building.BedroomsTotal ?? 0) Bedrooms"><div class="row-icon">@(Model.Building.BedroomsTotal ?? 0) <i class="icon-bed"></i></div><div class="row-text">Bedrooms</div></div>
+                                        <div title="@(Model.Building.BathroomTotal ?? 0) Bathrooms"><div class="row-icon">@(Model.Building.BathroomTotal ?? 0) <i class="icon-bath"></i></div><div class="row-text">Bathrooms</div></div>
+                                        <div title="Property type - @propertyType"><div class="row-icon"><i class="icon-home"></i></div><div class="row-text">@propertyType</div></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-right">
+                                    <h4 class="price">@((Model.TransactionType ?? TransactionType.For_sale).GetLookupDisplayText()): $@(Model.GetPriceString())</h4>
+                                    <p>MLS® Number: @(Model.MlsNumber)</p>
+                                </div>
+                            </div>
+                            @if (Model.TransactionType == TransactionType.For_sale && Model.Price.HasValue)
+                            {
+                                <div class="row mb-3">
+                                    <div class="col-md-12">Estimated mortgage: <a href="#mortgage-calculator" class="estimated-mortgage">$<span id="estimated-mortgage-value">0</span> monthly <i class="icon-calculator"></i></a></div>
+                                </div>
+                            }
+                            <div class="row mb-3">
+                                @{
+                                    var description = string.Join("<br/>", Model.AdditinalRemarks ?? string.Empty, Model.Description ?? string.Empty);
+                                    if (string.IsNullOrWhiteSpace(description)) description = "Ooops! Seems like we don't have any description for this property";
+                                }
+                                <div class="col-md-12"><h3>Description</h3></div>
+                                <div class="col-md-12">@Html.Raw(description)</div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 property-wrap ftco-animate mt-0">
+                <div class="row property-details">
+                    <div class="col-md-12"><h3 class="property-detail-group">Property summary</h3></div>
+                    @foreach (var property in Model.GetPropertySummary())
+                    {
+                        <div class="col-md-3 col-sm-6 property-detail">
+                            <div class="label">@property.Key</div>
+                            <div class="value">@property.Value</div>
+                        </div>
+                    }
+                </div>
+            </div>
+            @{
+                var links = Model.AlternateURL.GetNotNullOrEmptyProperties();
+
+                @if (links.Any())
+                {
+                    <div class="col-md-12 property-wrap ftco-animate mt-0 mb-4">
+                        <div class="row property-details additional-links">
+                            <div class="col-md-12 mb-3"><h3 class="property-detail-group">Additional links</h3></div>
+                            @foreach (var link in links)
+                            {
+                                var className = link.Key.ToLower().Replace("link", string.Empty).Trim();
+
+                                <div class="col property-detail">
+                                    <a href="@(link.Value)" title="@(link.Key)" target="_blank" class="additional-link">
+                                        <span><i class="link-icon @className"></i></span>
+                                        <span class="link-label">@(link.Key.Replace("Link", string.Empty).Trim())</span>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            }
+            <div class="col-md-12 property-wrap ftco-animate mt-0">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <h3 class="property-detail-group">Property Details</h3>
+                    </div>
+                    <div class="col-md-12">
+                        @foreach (var group in Model.GetPropertyDetails())
+                        {
+                            <div class="ftco-animate">
+
+                                <div class="row property-details">
+                                    <div class="col-md-12">
+                                        @if (!string.IsNullOrWhiteSpace(group.Key))
+                                        {
+                                            <h5 class="property-detail-group">@(group.Key)</h5>
+                                        }
+                                    </div>
+                                    @foreach (var property in group.Value)
+                                    {
+                                        <div class="col-md-3 col-sm-6 property-detail">
+                                            <div class="label">@property.Key</div>
+                                            <div class="value">@property.Value</div>
+                                        </div>
+                                    }
+                                </div>
+                                <hr />
+                            </div>
+                        }
+                    </div>
+                    @foreach (var table in Model.GetTableProperties().Where(x => x.Value != null && x.Value.Length > 0))
+                    {
+                        var props = table.Value.GetType().GetElementType().GetDisplayableProperties();
+                        <div class="col-md-12 property-wrap ftco-animate mt-0">
+                            <div class="row property-details">
+                                <div class="col-md-12">
+                                    <h5 class="property-detail-group mb-2">@table.Key</h5>
+                                </div>
+                                <div class="col-md-12">
+                                    <table class="table">
+                                        <thead class="thead-primary">
+                                            <tr>
+                                                @foreach (var prop in props)
+                                                {
+                                                    <th>@prop.GetPropertyDisplayName()</th>
+                                                }
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var obj in table.Value)
+                                            {
+                                                <tr>
+                                                    @foreach (var prop in props)
+                                                    {
+                                                        <td>@prop.GetValue(obj).ToDisplayString()</td>
+                                                    }
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <hr />
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (!Model.Address.Coordinates.IsNullOrEmpty())
+            {
+                <div class="col-md-12 tour-wrap ftco-animate">
+                    <div class="row property-details mb-4">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-12"><h5 class="property-detail-group">Map</h5></div>
+                                <div class="col-md-12"><div id="map"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            }
+            @if (!Model.Board.IsNullOrEmpty() || !Model.ListingOfficeName.IsNullOrEmpty() || Model.Source == ListingSource.Crea)
+            {
+                <div class="col-md-12 tour-wrap ftco-animate">
+                    <div class="row property-details mb-4">
+                        @if (!Model.ListingOfficeName.IsNullOrEmpty())
+                        {
+                            <div class="col-md-3 col-sm-4 property-detail">
+                                <div class="label">Brokered by</div>
+                                <div class="value">@Model.ListingOfficeName</div>
+                            </div>
+                        }
+                        @if (!Model.Board.IsNullOrEmpty())
+                        {
+                            <div class="col-md-3 col-sm-4 property-detail">
+                                <div class="label">Source</div>
+                                <div class="value">@Model.Board</div>
+                            </div>
+                        }
+                        @if (Model.Source == ListingSource.Crea)
+                        {
+                            <div class="col-md-3 col-sm-4 property-detail">
+                                <a href="https://www.realtor.ca/real-estate/@(Model.ExternalId)/view"
+                                alt="Powered by: REALTOR.ca"
+                                target="_blank"> 
+                                <img width="125"
+                                        src="https://www.realtor.ca/images/en-ca/powered_by_realtor.svg" />
+                                </a>
+                            </div>
+                        }
+                    </div>
+                    <hr />
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@if (listingsSettings.ShowSimilarListings) 
+{
+    var maxPriceDifference = listingsSettings.SimilarListingsMaxPriceDifferencePercentage ?? 20d;
+    var similarListings = await DataAccess.GetSimilarListingsAsync(Model.Id, maxPriceDifference / 100, listingsSettings.SimilarListingsMaxDistanceKm, listingsSettings.SimilarListingsNumber ?? 9);
+    if (similarListings.Count > 0)
+    {
+        <section class="ftco-section ftco-properties ftco-animate" id="properties-section">
+            <div class="container">
+                <div class="row justify-content-center pb-5 title-row">
+                    <div class="col-md-12 heading-section text-center ftco-animate">
+                        <h3 class="mb-4">@(!listingsSettings.SimilarListingsTitle.IsNullOrEmpty() ? listingsSettings.SimilarListingsTitle : "Similar listings")</h3>
+                    </div>
+                </div>
+                <div class="row listings-row mb-5">
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_FeaturedListingsSlider", (similarListings, false))
+                    </div>
+                </div>
+                <hr />
+            </div>
+        </section>
+    }
+}
+
+@if (Model.TransactionType == TransactionType.For_sale && Model.Price.HasValue)
+{
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 tour-wrap ftco-animate">
+                    <div class="row property-details mortgage-calculator" id="mortgage-calculator">
+                        <div class="col-md-12">
+                            @await Html.PartialAsync("_MortgageCalculator", Model.Price)
+                        </div>
+                    </div>
+                    <hr />
+                </div>
+            </div>
+        </div>
+    </section>
+}
+<section class="ftco-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 tour-wrap ftco-animate">
+                <div class="row property-details" id="request-form-property">
+                    <div class="col-md-12 text-center">
+                        <h3 class="property-detail-group mb-5">Request more information</h5>
+                    </div>
+                    <div class="col-md-12">
+                        @await Html.PartialAsync("_RequestInformationForm", new RequestInformationModel { Address = Model.Address.AddressDisplayString, ListingId = Model.Id })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section> <!-- .section -->
+
+
+@if (showCreateAccountModal)
+{
+    @await Html.PartialAsync("_CreateAccountModal", new RequestInformationModel { Address = Model.Address.AddressDisplayString, ListingId = Model.Id })
+}
+
+@section AdditionalScripts {
+    <script type="text/javascript">
+            var map = L.map('map').setView([@(Model.Address.Coordinates?.Latitude), @(Model.Address.Coordinates?.Longitude)], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            L.marker([@(Model.Address.Coordinates?.Latitude), @(Model.Address.Coordinates?.Longitude)]).addTo(map);
+    </script>
+
+    <script type="text/javascript">
+            sendEvent('view', '@Model.Id');
+    </script>
+
+    @if (showCreateAccountModal)
+    {
+        <script type="text/javascript">
+            $('#createAccountModal').modal('show');
+        </script>
+    }
+}

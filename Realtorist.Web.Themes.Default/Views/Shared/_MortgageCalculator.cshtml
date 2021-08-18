@@ -1,0 +1,29 @@
+﻿@model double
+<div>
+    <div class="w-100 text-center mb-5"><h3>Mortgage payment calculator</h3></div>
+    <div id="mortgage_calculator"></div>
+    <p class="legal-notice">This calculator is for demonstration purposes only. Always consult a professional financial advisor before making personal financial decisions.</p>
+</div>
+
+<script type="text/javascript">
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var interestRate = 2.5;
+                        var price = @Model;
+                        calculatorUtils.init();
+                        $("#mortgage_calculator").calculator({
+                            price: price,
+                            rate: interestRate,
+                            autoCalculate: true,
+                            chartArea: {
+                                width: "100%",
+                                height: "auto",
+                                left: "15%",
+                                top: "40",
+                            }
+
+                        });
+
+                        var estMortgage = mortgageCalculator.getPeriodicPaymentAmnt('monthly', interestRate, 25, (price - price * mortgageCalculator.getMinimumDownpaymentPercent(price) / 100)).toFixed(2);
+                        $('#estimated-mortgage-value').text(estMortgage);
+                    });
+</script>

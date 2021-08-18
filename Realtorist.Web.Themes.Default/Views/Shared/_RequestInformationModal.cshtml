@@ -1,0 +1,20 @@
+﻿@model Realtorist.Models.Dto.RequestInformationModel
+
+<div class="modal fade" id="requestInformationModal" tabindex="-1" role="dialog" aria-labelledby="requestInformationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content bg-light">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="requestInformationModalLabel">Request more information</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    @await Html.PartialAsync("_RequestInformationForm", Model) 
+                </div>
+                <div class="modal-footer">
+                    <button class="btn py-3 px-4 btn-primary submit">Request</button>
+                </div>
+        </div>
+    </div>
+</div>

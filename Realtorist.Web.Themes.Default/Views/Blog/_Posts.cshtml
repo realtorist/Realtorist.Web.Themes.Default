@@ -1,0 +1,89 @@
+﻿@inject ISettingsProvider SettingsProvider
+@model PaginationResult<Post>
+
+@{
+    var websiteSettings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+}
+
+<section class="ftco-section blog-post">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col-lg-8 ftco-animate">
+                @foreach (var post in Model.Results)
+                {
+                    var postUrl = Url.Action("Post", "Blog", new { link = post.Link });
+                    <div class="row">
+                        <article class="col-lg-12">
+                            <h2 class="mb-2"><a href="@postUrl">@post.Title</a></h2>
+                            <div class="breadcrumbs">
+                                <a href="@Url.Action("Category", "Blog", new { category = post.Category })"
+                                rel="category tag">@post.Category</a>
+                            </div>
+                            <time class="timestamp mb-2">@websiteSettings.GetDateTimeInTimeZoneFromUtc(post.PublishDate).ToString("MMMM dd, yyyy")</time>
+                            @if (!post.SubTitle.IsNullOrEmpty()) {
+                                <h5 class="mb-3">@post.SubTitle</h5>
+                            }
+                            <p>
+                                <a href="@postUrl">
+                                    <img class="post-image" src="@post.Image" alt="@post.Title - @post.SubTitle"
+                                    class="img-fluid" />
+                                </a>
+                            </p>
+                            <section class="article-text">
+                                @await Html.PartialAsync("_HtmlEditorDisplay", post.Text.TruncateHtml(Constants.AverageCharactersPerSummarry))
+                                <div class="d-flex justify-content-center mt-5">
+                                    <a class="btn btn-primary" href="@postUrl">Read More</a>
+                                </div>
+                            </section>
+                            <div class="d-flex justify-content-space-between mb-5 mt-5">
+                                <div class="tag-widget post-tag-container">
+                                    @await Html.PartialAsync("_TagCloud", post.Tags)
+                                </div>
+                                <div>
+                                    <a href="@postUrl#comments"><span class="icon-chat"></span> @(post.Comments.Length)</a>
+                                </div>
+                            </div>
+
+                        </article>
+                    </div>
+                }
+
+                @if (Model.RecordsReturned == 0)
+                {
+                    <div class="row">
+                        <article class="col-lg-12 mt-5">
+                            <h2 class="mb-5 text-center">We are sorry</h2>
+                            <p>We can't find any blog posts. Please change your search criteria or <a
+                                href="@Url.Action("Index", "Blog")">checkout all posts</a>.</p>
+                        </article>
+                    </div>
+                }
+                else
+                {
+                    <div class="row d-block">
+                        @functions {
+                        public static string BuildPageUrl(Microsoft.AspNetCore.Http.HttpContext context, int page)
+                        {
+                            var query = context.Request.Query.ToDictionary(x => x.Key, x => x.Value);
+                            query["page"] = page.ToString();
+                            return "?" + string.Join("&", query.Select(x => $"{x.Key}={WebUtility.UrlEncode(x.Value)}"));
+                        }
+                    }
+                    @if (Model.CurrentPage < Model.TotalPages)
+                        {
+                            <a href="@BuildPageUrl(Context, Model.CurrentPage+1)" class="btn btn-primary float-left">Previous
+                                posts</a>
+                        }
+                        @if (Model.CurrentPage > 1)
+                        {
+                            <a href="@BuildPageUrl(Context, Model.CurrentPage-1)" class="btn btn-primary float-right">Next
+                                posts</a>
+                        }
+                    </div>
+                }
+            </div> <!-- .col-md-8 -->
+            @await Html.PartialAsync("_Sidebar")
+
+        </div>
+    </div>
+</section> <!-- .section -->

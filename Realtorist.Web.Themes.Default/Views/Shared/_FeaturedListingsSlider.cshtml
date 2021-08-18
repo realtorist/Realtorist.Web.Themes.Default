@@ -1,0 +1,10 @@
+﻿@using Realtorist.Models.Listings;
+@model (List<Listing> listings, bool newTabLink) 
+<div class="carousel-properties owl-carousel">
+    @foreach (var listing in Model.listings)
+    {
+        <div class="item">
+            @await Html.PartialAsync("_ListingItem", (listing, Model.newTabLink)) 
+        </div>
+    }
+</div>

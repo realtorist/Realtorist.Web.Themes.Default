@@ -1,0 +1,9 @@
+@inject ISettingsProvider SettingsProvider
+@{
+    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+}
+
+<div class="sidebar-box ftco-animate">
+    <h3 class="heading-sidebar">About me</h3>
+    <p>@profile.ShortDescription</p>
+</div>

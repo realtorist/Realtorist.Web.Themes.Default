@@ -1,0 +1,20 @@
+@inject ISettingsProvider SettingsProvider
+@model Dictionary<string, JToken>
+<section class="ftco-section contact-section ftco-no-pb contact-form-component">
+    <div class="container">
+        <div class="row justify-content-center mb-3 pb-3 title-row">
+            <div class="col-12 heading-section text-center ftco-animate">
+                <h2 class="mb-4">@(Model?.GetValueOrDefault("title")?.ToObject<string>() ?? "Contact Me")</h2>
+                <p>@(Model?.GetValueOrDefault("subTitle")?.ToObject<string>() ?? "")</p>
+            </div>
+        </div>
+
+        <div class="row block-9 bg-light">
+            <div class="col-12 ftco-animate">
+                <div class="p-4 p-md-5 contact-form">
+                    @await Html.PartialAsync("_RequestInformationForm", new Realtorist.Models.Dto.RequestInformationModel())
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

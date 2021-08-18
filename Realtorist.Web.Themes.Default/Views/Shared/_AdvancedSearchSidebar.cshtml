@@ -1,0 +1,87 @@
+﻿@using Realtorist.Models.Enums.LookupTypes
+@using Realtorist.Models.Search
+@using Realtorist.Models.Search.Enums
+@model ListingSearchRequest
+
+<form method="get" class="search-property form-inline" id="advanced-search-form" action="@Url.Action("Search", "Property")">
+    @Html.HiddenFor(x => x.Boundaries.NorthEast.Latitude, new { id = "search-property-map-boundaries-north-east-latitude" })
+    @Html.HiddenFor(x => x.Boundaries.NorthEast.Longitude, new { id = "search-property-map-boundaries-north-east-longitude" })
+    @Html.HiddenFor(x => x.Boundaries.SouthWest.Latitude, new { id = "search-property-map-boundaries-south-west-latitude" })
+    @Html.HiddenFor(x => x.Boundaries.SouthWest.Longitude, new { id = "search-property-map-boundaries-south-west-longitude" })
+
+    <div id="advanced-search-form-wrapper">
+        <div class="form-field">
+            <div class="icon"><span class="icon-map-pin"></span></div>
+            @Html.TextBoxFor(m => m.Address, new { @class = "form-control", id = "search-address", placeholder = "Address / City" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.TransactionType, new[] { new SelectListItem("Transaction Type", null) }.Union(Html.GetEnumSelectList<TransactionTypeSearch>()), new { @class = "form-control", id = "search-transaction-type" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.Bedrooms, Html.GetEnumSelectList<RoomNumberSearch>().Select(x => new SelectListItem(x.Text + " Beds", x.Value)).OrderBy(x => int.Parse(x.Value) % ((int)RoomNumberSearch.OnePlus - 1)), new { @class = "form-control", id = "search-min-beds" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.Bathrooms, Html.GetEnumSelectList<RoomNumberSearch>().Select(x => new SelectListItem(x.Text + " Baths", x.Value)).OrderBy(x => int.Parse(x.Value) % ((int)RoomNumberSearch.OnePlus - 1)), new { @class = "form-control", id = "search-min-bathrooms" })
+        </div>
+
+        <div class="form-field">
+            <div class="icon"><span class="icon-dollar"></span></div>
+            @Html.TextBoxFor(m => m.MinPrice, new { @class = "form-control", type = "number", step = "1000", placeholder = "Min Price", id = "search-min-price" })
+        </div>
+
+        <div class="form-field">
+            <div class="icon"><span class="icon-dollar"></span></div>
+            @Html.TextBoxFor(m => m.MaxPrice, new { @class = "form-control", type = "number", step = "1000", placeholder = "Max Price", id = "search-max-price" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.PropertyType, new[] { new SelectListItem("Property Type", null) }.Union(Html.GetEnumSelectList<PropertyType>()), new { @class = "form-control", id = "search-property-type" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.BuildingType, new[] { new SelectListItem("Building Type", null) }.Union(Html.GetEnumSelectList<BuildingType>()), new { @class = "form-control", id = "search-building-type" })
+        </div>
+
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.ConstructionStyle, new[] { new SelectListItem("Building Style", null) }.Union(Html.GetEnumSelectList<ConstructionStyleAttachment>()), new { @class = "form-control", id = "search-building-style" })
+        </div>
+        
+        <div class="form-field">
+            @Html.DropDownListFor(m => m.OwnershipType, new[] { new SelectListItem("Ownership Type", null)
+            }.Union(Html.GetEnumSelectList<OwnershipType>()), new { @class = "form-control", id = "search-ownership-type" })
+        </div>
+
+        <div class="form-field">
+            <div class="icon"><span class="icon-pencil"></span></div>
+            @Html.TextBoxFor(m => m.MinAreqSqFt, new { @class = "form-control", type = "number", step = "10", placeholder = "Min Area", id = "search-min-area" })
+        </div>
+
+        <div class="form-field">
+            <div class="form-check">
+                @Html.CheckBoxFor(m => m.Garage, new { @class = "form-check-input", id = "search-garage" })
+                <label class="form-check-label" for="search-garage">Garage</label>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <div class="form-check">
+                @Html.CheckBoxFor(m => m.Waterfront, new { @class = "form-check-input", id = "search-waterfron" })
+                <label class="form-check-label" for="search-waterfron">Waterfront</label>
+            </div>
+        </div>
+
+        <div class="form-field dropdown d-none">
+            <a class="nav-link" href="#" id="navbarDropdownMenu" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="icon-filter_list"></span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-right">
+            </ul>
+        </div>
+        <div class="form-field skip">
+            <button type="submit" value="" class="form-control btn btn-primary"><i class="icon-search"></i></button>
+        </div>
+    </div>
+</form>

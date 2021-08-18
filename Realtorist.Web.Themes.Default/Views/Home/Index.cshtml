@@ -1,0 +1,95 @@
+﻿@inject ISettingsProvider SettingsProvider
+@{
+    Layout = null;
+    var themeSettings = await SettingsProvider.GetSettingAsync<ThemeSettings>(AppearanceSettingTypes.ThemeSettings);
+    var homePageSettings = await SettingsProvider.GetSettingAsync<HomePageSettings>(AppearanceSettingTypes.HomePageSettings);
+    var websiteSettings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+    var socialSettings = await SettingsProvider.GetSettingAsync<SocialSettings>(SettingTypes.Social);
+    var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+
+    ViewData["json-ld"] = $@"{{
+        ""@context"": ""http://schema.org/"",
+        ""@type"": ""Organization"",
+        ""name"": ""{profile.FullName} - REALTOR®"",
+        ""logo"": ""{websiteSettings.Logo}"",
+        ""telephone"": ""{profile.Phone.FormatPhoneNumber()}"",
+        ""url"": ""https://{websiteSettings.WebsiteAddress}"",
+        ""sameAs"": [""{socialSettings.InstagramProfileUrl}"", ""{socialSettings.FacebookProfileUrl}""],
+        ""contactPoint"": {{
+            ""@type"": ""ContactPoint"",
+            ""telephone"": ""{profile.Phone.FormatPhoneNumber()}"",
+            ""availableLanguage"": [""en""]
+        }}
+    }}";
+}
+<!DOCTYPE html>
+<html lang="en">
+@await Html.PartialAsync("_HtmlHead", string.Empty)
+
+<body>
+    @await Html.PartialAsync("_ContactInformationTop")
+    @await Html.PartialAsync("_Navigation", (false, true, true))
+    <section class="hero-wrap js-fullheight"
+             data-section="home"
+             data-stellar-background-ratio="0.5">
+        <div class="overlay"></div>
+        <div class="container">
+            <div class="row no-gutters slider-text js-fullheight align-items-center justify-content-start"
+                 data-scrollax-parent="true">
+                <div class="col-md-6 ftco-animate z-index-2"
+                     data-scrollax=" properties: { translateY: '70%' }">
+                    @if (!themeSettings.HeroLogo.IsNullOrEmpty())
+                    {
+                        <div class="text-center mb-5">
+                                <img class="hero-logo" src="@themeSettings.HeroLogo"/>
+                        </div>
+                    }
+                    else
+                    {
+                        <h1 class="mb-5"
+                            data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">@themeSettings.HeroTitle</h1>
+                    }
+                    
+                    @if (!themeSettings.HeroSubTitle.IsNullOrEmpty())
+                    {
+                        <p class="mb-5"
+                        data-scrollax="properties: { translateY: '30%', opacity: 1.6 }">@themeSettings.HeroSubTitle</p>
+                    }
+                    <form action="@Url.Action("Search", "Property")"
+                          class="search-location">
+                        <div class="row">
+                            <div class="col-lg align-items-end">
+                                <div class="form-group">
+                                    <div class="form-field">
+                                        <input type="text"
+                                               id="quick-search"
+                                               name="Address"
+                                               class="form-control"
+                                               placeholder="Search by City, Address, Postal Code, MLS®#">
+                                        <button type="submit"><span class="ion-ios-search"></span></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    @foreach (var component in homePageSettings.Components)
+    {
+        @await Html.PartialAsync("PageComponents/_" + component.Type, component.Values);
+    }
+
+    @await Html.PartialAsync("_Footer")
+    @await Html.PartialAsync("_Loader", (true, false, true, "page-loader"))
+
+    @await Html.PartialAsync("_Scripts")
+
+    <script type="text/javascript"
+            src="/@(ResourceHelper.ContentPrefix)/js/home.js"></script>
+
+</body>
+
+</html>

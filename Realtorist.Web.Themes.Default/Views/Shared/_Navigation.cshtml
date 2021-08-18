@@ -1,0 +1,51 @@
+﻿@model (bool isFixed, bool onBlack, bool isHero)
+@inject ISettingsProvider SettingsProvider
+@{ 
+    var settings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
+    var themeSettings = await SettingsProvider.GetSettingAsync<ThemeSettings>(AppearanceSettingTypes.ThemeSettings);
+}
+
+<nav class="navbar navbar-expand-lg @(Model.isHero ? "ftco_navbar" : string.Empty) @(!Model.isFixed && !Model.isHero ? "awake scrolled" : string.Empty) @(!Model.isHero ? "position-relative mb-lg-3": string.Empty)  ftco-navbar-light site-navbar-target @(Model.onBlack ? "on-black" : string.Empty)" id="ftco-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+            @if (!settings.Logo.IsNullOrEmpty()) {
+                    <img src="@settings.Logo" class="logo"/>
+            }
+            @if (!settings.AlternativeLogo.IsNullOrEmpty() || !settings.Logo.IsNullOrEmpty()) {
+                    <img src="@(!settings.AlternativeLogo.IsNullOrEmpty() ? settings.AlternativeLogo : settings.Logo)" class="logo alternative"/>
+            } @settings.WebsiteName
+            </a>
+        <button class="navbar-toggler js-fh5co-nav-toggle fh5co-nav-toggle" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="icon-menu"></span> Menu
+        </button>
+
+        <div class="collapse navbar-collapse" id="ftco-nav">
+            <ul class="navbar-nav nav ml-auto">
+                @foreach (var item in themeSettings.HeaderMenu)
+                {
+                    <li class="nav-item">
+                        @if (item.Children.IsNullOrEmpty())
+                        {
+                            <a 
+                                href="@item.Link" 
+                                class="nav-link @(Context.Request.Path == item.Link ? "active" : string.Empty)" 
+                                data-target="#">
+                                <span>@item.Title</span>
+                            </a>
+                        } else {
+                            <a class="nav-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                @item.Title
+                            </a>
+                            <div class="dropdown-menu">
+                                @foreach (var child in item.Children)
+                                {
+                                    <a class="dropdown-item nav-link" href="@child.Link">@child.Title</a>
+                                }
+                            </div>
+                        }
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</nav>
