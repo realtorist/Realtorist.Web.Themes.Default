@@ -332,7 +332,7 @@ AOS.init({
         image: {
             verticalFit: true,
             titleSrc: function (item) {
-                return item.el.attr('title');
+                return item.el.find('img').attr('title');
             }
         },
         zoom: {
