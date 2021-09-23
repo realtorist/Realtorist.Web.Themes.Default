@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ExtCore.Mvc.Infrastructure" Version="6.0.0" />
+    <PackageReference Include="Realtorist.Extensions.Base" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>

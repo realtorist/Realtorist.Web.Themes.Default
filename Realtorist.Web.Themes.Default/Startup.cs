@@ -1,4 +1,3 @@
-using ExtCore.Infrastructure.Actions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,14 +12,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Runtime.Loader;
+using Realtorist.Extensions.Base;
 
 namespace Realtorist.Web.Themes.Default
 {
-    public class Startup : IConfigureServicesAction, IConfigureAction
+    public class Startup : IConfigureServicesExtension, IConfigureApplicationExtension
     {
         public int Priority => 1000;
 
-        void IConfigureServicesAction.Execute(IServiceCollection services, IServiceProvider serviceProvider)
+        public void ConfigureServices(IServiceCollection services, IServiceProvider serviceProvider)
         {
             var env = serviceProvider.GetService<IWebHostEnvironment>();
             var logger = serviceProvider.GetService<ILogger<Startup>>();
@@ -70,7 +70,7 @@ namespace Realtorist.Web.Themes.Default
             });
         }
 
-        void IConfigureAction.Execute(IApplicationBuilder app, IServiceProvider serviceProvider)
+        public void ConfigureApplication(IApplicationBuilder app, IServiceProvider serviceProvider)
         {
             var env = serviceProvider.GetService<IWebHostEnvironment>();
             var styleOverridesFileProvider = serviceProvider.GetService<StyleOverridesFileProvider>();
