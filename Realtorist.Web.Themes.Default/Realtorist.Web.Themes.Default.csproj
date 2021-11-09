@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Realtorist.Extensions.Base" Version="0.0.1" />
+    <PackageReference Include="Realtorist.Extensions.Base" Version="0.0.2" />
   </ItemGroup>
 
   <ItemGroup>
