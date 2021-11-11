@@ -6,6 +6,7 @@
     var websiteSettings = await SettingsProvider.GetSettingAsync<WebsiteSettings>(SettingTypes.Website);
     var socialSettings = await SettingsProvider.GetSettingAsync<SocialSettings>(SettingTypes.Social);
     var profile = await SettingsProvider.GetSettingAsync<ProfileSettings>(SettingTypes.Profile);
+    var socials = socialSettings.SocialNetworks?.Select(s => $"\"{s.Url}\"").Join(",") ?? string.Empty;
 
     ViewData["json-ld"] = $@"{{
         ""@context"": ""http://schema.org/"",
@@ -14,7 +15,7 @@
         ""logo"": ""{websiteSettings.Logo}"",
         ""telephone"": ""{profile.Phone.FormatPhoneNumber()}"",
         ""url"": ""https://{websiteSettings.WebsiteAddress}"",
-        ""sameAs"": [""{socialSettings.InstagramProfileUrl}"", ""{socialSettings.FacebookProfileUrl}""],
+        ""sameAs"": [{socials}],
         ""contactPoint"": {{
             ""@type"": ""ContactPoint"",
             ""telephone"": ""{profile.Phone.FormatPhoneNumber()}"",

@@ -18,7 +18,7 @@ namespace Realtorist.Web.Themes.Default
 {
     public class Startup : IConfigureServicesExtension, IConfigureApplicationExtension
     {
-        public int Priority => 1000;
+        public int Priority => (int)ExtensionPriority.Theme + 100;
 
         public void ConfigureServices(IServiceCollection services, IServiceProvider serviceProvider)
         {

@@ -14,15 +14,10 @@
                     <h2 class="ftco-heading-2">@settings.WebsiteName</h2>
                     <p>@settings.WebsiteName - @settings.WebsiteTitle</p>
                     <ul class="ftco-footer-social list-unstyled mt-5">
-                        @if (!(socialSettings?.FacebookProfileUrl.IsNullOrEmpty() ?? true))
+                        @foreach (var socialNetwork in socialSettings?.SocialNetworks ?? new SocialNetworkLink[0])
                         {
-                            <li class="ftco-animate"><a href="@socialSettings.FacebookProfileUrl"
-                               target="_blank"><span class="icon-facebook"></span></a></li>
-                        }
-                        @if (!(socialSettings?.InstagramProfileUrl.IsNullOrEmpty() ?? true))
-                        {
-                            <li class="ftco-animate"><a href="@socialSettings.InstagramProfileUrl"
-                               target="_blank"><span class="icon-instagram"></span></a></li>
+                            <li class="ftco-animate"><a href="@socialNetwork.Url"
+                               target="_blank"><span class="icon-@(socialNetwork.SocialNetwork.ToString().ToLower())"></span></a></li>
                         }
                     </ul>
                 </div>

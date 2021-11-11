@@ -6,6 +6,7 @@
 
 @inject ISettingsProvider SettingsProvider
 @inject IListingsDataAccess DataAccess
+@inject IExtensionManager ExtensionManager
 
 @model Listing
 @{
@@ -290,7 +291,7 @@
                     <hr />
                 </div>
             }
-            @if (!Model.Board.IsNullOrEmpty() || !Model.ListingOfficeName.IsNullOrEmpty() || Model.Source == ListingSource.Crea)
+            @if (!Model.Board.IsNullOrEmpty() || !Model.ListingOfficeName.IsNullOrEmpty() || Model.FeedId is not null)
             {
                 <div class="col-md-12 tour-wrap ftco-animate">
                     <div class="row property-details mb-4">
@@ -308,16 +309,26 @@
                                 <div class="value">@Model.Board</div>
                             </div>
                         }
-                        @if (Model.Source == ListingSource.Crea)
+                        @if (Model.FeedId is not null)
                         {
-                            <div class="col-md-3 col-sm-4 property-detail">
-                                <a href="https://www.realtor.ca/real-estate/@(Model.ExternalId)/view"
-                                alt="Powered by: REALTOR.ca"
-                                target="_blank"> 
-                                <img width="125"
-                                        src="https://www.realtor.ca/images/en-ca/powered_by_realtor.svg" />
-                                </a>
-                            </div>
+                            var feedExtension = ExtensionManager.GetInstances<Realtorist.RetsClient.Abstractions.IListingsFeedExtension>().FirstOrDefault(x => x.Name == Model.FeedType);
+                            if (feedExtension is not null && feedExtension.GetExternalLink(Model) is not null)
+                            {
+                                <div class="col-md-3 col-sm-4 property-detail">
+                                    <a href="@(feedExtension.GetExternalLink(Model))"
+                                    target="_blank"> 
+                                    @if (feedExtension.PoweredByImageUrl is not null)
+                                    {
+                                        <img width="125"
+                                            src="@(feedExtension.PoweredByImageUrl)" />
+                                    }
+                                    else
+                                    {
+                                        <span>View orginal listing</span>
+                                    }
+                                    </a>
+                                </div>
+                            }
                         }
                     </div>
                     <hr />

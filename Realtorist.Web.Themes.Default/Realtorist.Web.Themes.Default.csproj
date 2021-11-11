@@ -5,7 +5,7 @@
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <IsPackable>true</IsPackable>
     <PackageId>Realtorist.Web.Themes.Default</PackageId>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 
@@ -23,18 +23,18 @@
    </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Realtorist.Models" Version="0.0.2" />
-    <PackageReference Include="Realtorist.DataAccess.Abstractions" Version="0.0.2" />
-    <PackageReference Include="Realtorist.GeoCoding.Abstractions" Version="0.0.2" />
-    <PackageReference Include="Realtorist.Services.Abstractions" Version="0.0.2" />
-    <PackageReference Include="Realtorist.RetsClient.Abstractions" Version="0.0.2" />
+    <PackageReference Include="Realtorist.Models" Version="0.0.3" />
+    <PackageReference Include="Realtorist.DataAccess.Abstractions" Version="0.0.3" />
+    <PackageReference Include="Realtorist.GeoCoding.Abstractions" Version="0.0.3" />
+    <PackageReference Include="Realtorist.Services.Abstractions" Version="0.0.3" />
+    <PackageReference Include="Realtorist.RetsClient.Abstractions" Version="0.0.3" />
 
-    <PackageReference Include="Realtorist.Web.Helpers" Version="0.0.2" />
-    <PackageReference Include="Realtorist.Web.Models" Version="0.0.2" />
+    <PackageReference Include="Realtorist.Web.Helpers" Version="0.0.3" />
+    <PackageReference Include="Realtorist.Web.Models" Version="0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Realtorist.Extensions.Base" Version="0.0.2" />
+    <PackageReference Include="Realtorist.Extensions.Base" Version="0.0.3" />
   </ItemGroup>
 
   <ItemGroup>
